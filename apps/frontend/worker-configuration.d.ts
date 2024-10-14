@@ -3,5 +3,4 @@
 interface CloudflareEnv {
 	API_URL: string;
 	ENVIRONMENT: string;
-	ASSETS: Fetcher;
 }

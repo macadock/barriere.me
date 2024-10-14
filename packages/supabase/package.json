@@ -1,0 +1,23 @@
+{
+	"name": "@repo/supabase",
+	"version": "0.0.0",
+	"private": true,
+	"license": "MIT",
+	"scripts": {
+		"start": "npx supabase start",
+		"stop": "npx supabase stop",
+		"reset": "npx supabase db reset",
+		"migrate": "npx supabase db migrate",
+		"seed": "npx supabase db seed",
+		"gen": "npx supabase gen types typescript --local --schema public > types/supabase.ts"
+	},
+	"exports": {
+		"types": "./types/supabase.ts"
+	},
+	"dependencies": {
+		"@supabase/supabase-js": "^2.45.4"
+	},
+	"devDependencies": {
+		"@repo/typescript-config": "*"
+	}
+}

@@ -12,7 +12,10 @@ export const measuresRoutes = new Hono<AppType>();
 measuresRoutes.get("/", async (c) => {
 	const supabase = c.get("supabase");
 
-	const { data, error } = await supabase.from("measurements").select("*");
+	const { data, error } = await supabase
+		.from("measurements")
+		.select("*")
+		.order("date", { ascending: false });
 
 	if (error) {
 		return c.json(error, 500);

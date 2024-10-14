@@ -76,4 +76,5 @@ export const deleteMeasure = async (measureId: string) => {
 	if (!response.ok) {
 		throw new Error("Error while deleting measure");
 	}
+	revalidateTag(ALL_MEASURES_CACHE_TAG);
 };

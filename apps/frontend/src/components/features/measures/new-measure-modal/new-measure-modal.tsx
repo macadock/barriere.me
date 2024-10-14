@@ -1,11 +1,13 @@
 "use client";
 
 import { createMeasure, updateMeasure } from "@/app/actions/measures";
+import { measureProps } from "@/components/features/measures/config";
 import {
 	AlertDialog,
 	AlertDialogAction,
 	AlertDialogCancel,
 	AlertDialogContent,
+	AlertDialogDescription,
 	AlertDialogFooter,
 	AlertDialogHeader,
 	AlertDialogTitle,
@@ -25,67 +27,11 @@ import {
 	type Measure,
 	measuresSchema,
 } from "api/src/routes/api/measures/schema";
-import {
-	ArrowLeft,
-	CalendarIcon,
-	Dumbbell,
-	Pencil,
-	RulerIcon,
-	Scale,
-	X,
-} from "lucide-react";
-import { revalidatePath } from "next/cache";
-import { type PropsWithChildren, type ReactNode, useState } from "react";
+import { ArrowLeft, CalendarIcon, X } from "lucide-react";
+import { type PropsWithChildren, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { date } from "zod";
-
-const measureProps: { [key: string]: { icon: ReactNode; label: string } } = {
-	leftBicep: {
-		icon: <Dumbbell className="h-4 w-4" />,
-		label: "Tour de bras gauche",
-	},
-	rightBicep: {
-		icon: <Dumbbell className="h-4 w-4" />,
-		label: "Tour de bras droit",
-	},
-	chest: {
-		icon: <RulerIcon className="h-4 w-4" />,
-		label: "Tour de poitrine",
-	},
-	waist: {
-		icon: <RulerIcon className="h-4 w-4" />,
-		label: "Tour de taille",
-	},
-	belly: {
-		icon: <RulerIcon className="h-4 w-4" />,
-		label: "Tour de ventre",
-	},
-	hips: {
-		icon: <RulerIcon className="h-4 w-4" />,
-		label: "Tour de hanches",
-	},
-	leftThigh: {
-		icon: <RulerIcon className="h-4 w-4" />,
-		label: "Tour de cuisse gauche",
-	},
-	rightThigh: {
-		icon: <RulerIcon className="h-4 w-4" />,
-		label: "Tour de cuisse droite",
-	},
-	leftKnee: {
-		icon: <RulerIcon className="h-4 w-4" />,
-		label: "Tour de genou gauche",
-	},
-	rightKnee: {
-		icon: <RulerIcon className="h-4 w-4" />,
-		label: "Tour de genou droit",
-	},
-	weight: {
-		icon: <Scale className="h-4 w-4" />,
-		label: "Poids",
-	},
-};
 
 export const NewMeasureModal = ({ children }: PropsWithChildren) => {
 	const [currentStep, setCurrentStep] = useState(0);
@@ -94,6 +40,8 @@ export const NewMeasureModal = ({ children }: PropsWithChildren) => {
 
 	const attributes = Object.keys(measureProps);
 	const key = attributes[currentStep];
+
+	const { icon, description, label } = measureProps[key];
 
 	const { control, reset } = useForm<Measure["measures"]>({
 		resolver: zodResolver(measuresSchema),
@@ -110,6 +58,8 @@ export const NewMeasureModal = ({ children }: PropsWithChildren) => {
 
 	const resetStep = () => {
 		setCurrentStep(0);
+		setMeasureId(undefined);
+		setMeasureDate(new Date());
 		reset();
 	};
 
@@ -160,26 +110,34 @@ export const NewMeasureModal = ({ children }: PropsWithChildren) => {
 			<AlertDialogContent>
 				<form action={handleSave} className={"flex flex-col gap-4"}>
 					<AlertDialogHeader>
-						<div className="flex items-center gap-2 justify-between w-full">
-							<Button
-								type="button"
-								variant="outline"
-								size="icon"
-								disabled={currentStep === 0}
-								title={"Retour"}
-								onClick={handlePrevious}
-							>
-								<ArrowLeft className={"h-4 w-4"} />
-							</Button>
-							<AlertDialogTitle>
-								<label htmlFor={key} className={"flex items-center gap-2"}>
-									{measureProps[key].label}
-									{measureProps[key].icon}
-								</label>
-							</AlertDialogTitle>
-							<AlertDialogCancel title="Annuler" onClick={resetStep}>
-								<X className={"h-4 w-4"} />
-							</AlertDialogCancel>
+						<div className={"flex flex-col gap-2 items-center justify-between"}>
+							<div className="flex items-center gap-2 justify-between w-full">
+								<Button
+									type="button"
+									variant="outline"
+									size="icon"
+									disabled={currentStep === 0}
+									title={"Retour"}
+									onClick={handlePrevious}
+								>
+									<ArrowLeft className={"h-4 w-4"} />
+								</Button>
+								<AlertDialogTitle>
+									<label htmlFor={key} className={"flex items-center gap-2"}>
+										{label}
+										{icon}
+									</label>
+								</AlertDialogTitle>
+
+								<AlertDialogCancel
+									title="Annuler"
+									onClick={resetStep}
+									className={"w-10 h-10 p-0"}
+								>
+									<X className={"h-4 w-4"} />
+								</AlertDialogCancel>
+							</div>
+							<AlertDialogDescription>{description}</AlertDialogDescription>
 						</div>
 					</AlertDialogHeader>
 					<div className="flex flex-col gap-4">

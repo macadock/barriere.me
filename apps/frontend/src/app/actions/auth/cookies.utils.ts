@@ -1,4 +1,3 @@
-import { getCloudflareContext } from "@opennextjs/cloudflare";
 import { cookies } from "next/headers";
 
 const COOKIE_EXPIRATION_DELAY = 60 * 60 * 24 * 30; // 30 days
@@ -11,20 +10,20 @@ const COOKIE_OPTIONS = {
 	expires: new Date(Date.now() + COOKIE_EXPIRATION_DELAY * 1000),
 };
 
-const getCookiesOptions = async () => {
-	const { ENVIRONMENT } = (await getCloudflareContext()).env;
+const getCookiesOptions = () => {
+	const ENVIRONMENT = process.env.ENVIRONMENT;
 	return {
 		...COOKIE_OPTIONS,
 		secure: ENVIRONMENT !== "local",
 	};
 };
 
-const setCookies = async ({
+const setCookies = ({
 	accessToken,
 	refreshToken,
 }: { accessToken?: string; refreshToken?: string }) => {
 	const cookieStore = cookies();
-	const cookiesOptions = await getCookiesOptions();
+	const cookiesOptions = getCookiesOptions();
 	if (accessToken) {
 		cookieStore.set(ACCESS_TOKEN_COOKIE_NAME, accessToken, cookiesOptions);
 	}

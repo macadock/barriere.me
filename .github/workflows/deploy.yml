@@ -15,8 +15,6 @@ jobs:
       INFRA_DIR: 'packages/infra'
       SUPABASE_DIR: 'packages/supabase'
       API_DIR: 'apps/api'
-      FRONTEND_DIR: 'apps/frontend'
-
 
       SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
       SUPABASE_DB_PASSWORD: ${{ secrets.SUPABASE_DB_PASSWORD }}
@@ -52,11 +50,6 @@ jobs:
         apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
         accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
         command: deploy --dry-run --minify --outdir dist
-
-    - name: Build frontend
-      id: build-frontend
-      run: npm run build
-      shell: bash
 
     - name: Setup Supabase CLI
       id: setup-supabase-cli
@@ -97,14 +90,3 @@ jobs:
       shell: bash
       working-directory: ${{ env.INFRA_DIR }}
       run: terraform apply -auto-approve -input=false
-
-    - name: Deploy frontend
-      id: deploy-frontend
-      uses: cloudflare/wrangler-action@v3
-      with:
-        workingDirectory: ${{ env.FRONTEND_DIR }}
-        apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-        accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-        command: pages deploy
-
-

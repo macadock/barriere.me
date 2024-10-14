@@ -3,7 +3,7 @@
 	"version": "0.1.0",
 	"private": true,
 	"scripts": {
-		"build": "cloudflare",
+		"build": "next build",
 		"dev": "next dev",
 		"dev:worker": "wrangler dev --port 8771",
 		"preview": "npm run build && npm run dev:worker",
@@ -12,15 +12,12 @@
 		"shadcn:add": "npx shadcn@latest add"
 	},
 	"devDependencies": {
-		"@cloudflare/workers-types": "^4.20241004.0",
-		"@opennextjs/cloudflare": "^0.1.0",
 		"@types/node": "^20",
 		"@types/react": "^18",
 		"@types/react-dom": "^18",
 		"postcss": "^8",
 		"tailwindcss": "^3.4.1",
-		"typescript": "^5",
-		"wrangler": "^3.80.2"
+		"typescript": "^5"
 	},
 	"dependencies": {
 		"@hookform/resolvers": "^3.9.0",

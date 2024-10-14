@@ -35,7 +35,7 @@ export async function handleLogin(
 		refreshToken: string;
 	}>();
 
-	await setCookies({
+	setCookies({
 		accessToken,
 		refreshToken,
 	});

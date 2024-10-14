@@ -4,7 +4,6 @@ import {
 	setCookies,
 } from "@/app/actions/auth/cookies.utils";
 import { getUser } from "@/app/actions/user";
-import { getCloudflareContext } from "@opennextjs/cloudflare";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 
@@ -20,7 +19,7 @@ export async function GET(request: Request) {
 		redirect("/login");
 	}
 
-	const { API_URL } = (await getCloudflareContext()).env;
+	const API_URL = process.env.API_URL;
 
 	const { searchParams } = new URL(request.url);
 	const url = new URL(`${API_URL}/auth/refresh-token`);
@@ -49,7 +48,7 @@ export async function GET(request: Request) {
 		refreshToken: string;
 	}>();
 
-	await setCookies({
+	setCookies({
 		accessToken,
 		refreshToken,
 	});

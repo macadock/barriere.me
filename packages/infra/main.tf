@@ -51,35 +51,3 @@ resource "cloudflare_workers_domain" "barriere-me-worker-domain" {
   service    = cloudflare_workers_script.barriere-me-worker.name
   zone_id    = var.CLOUDFLARE_ZONE_ID
 }
-
-resource "cloudflare_pages_project" "barriere-me-frontend" {
-  account_id        = var.CLOUDFLARE_ACCOUNT_ID
-  name              = "barriere-me-frontend"
-  production_branch = "main"
-
-  deployment_configs {
-    production {
-      compatibility_date  = "2024-09-26"
-      compatibility_flags = ["nodejs_compat"]
-
-      environment_variables = {
-        ENVIRONMENT = var.ENVIRONMENT
-        API_URL     = "https://api.${var.HOSTNAME}/api"
-      }
-    }
-  }
-}
-
-resource "cloudflare_record" "barriere-me-frontend_domain_zone" {
-  zone_id = var.CLOUDFLARE_ZONE_ID
-  name    = var.HOSTNAME
-  content = cloudflare_pages_project.barriere-me-frontend.domains[0]
-  type    = "CNAME"
-  proxied = true
-}
-
-resource "cloudflare_pages_domain" "barriere-me-frontend-domain" {
-  account_id   = var.CLOUDFLARE_ACCOUNT_ID
-  domain       = var.HOSTNAME
-  project_name = cloudflare_pages_project.barriere-me-frontend.name
-}

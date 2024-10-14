@@ -1,4 +1,3 @@
-import { getCloudflareContext } from "@opennextjs/cloudflare";
 import { cookies } from "next/headers";
 
 interface FetchWithCookiesParams {
@@ -12,7 +11,7 @@ export const fetchWithCookies = async ({
 	query,
 	tags = [],
 }: FetchWithCookiesParams): Promise<Response> => {
-	const { API_URL } = (await getCloudflareContext()).env;
+	const API_URL = process.env.API_URL;
 	const cookiesStore = cookies();
 
 	const accessTokenCookie = cookiesStore.get("access_token");

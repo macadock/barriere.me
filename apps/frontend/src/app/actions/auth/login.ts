@@ -30,10 +30,10 @@ export async function handleLogin(
 		);
 	}
 
-	const { accessToken, refreshToken } = await response.json<{
+	const { accessToken, refreshToken } = (await response.json()) as {
 		accessToken: string;
 		refreshToken: string;
-	}>();
+	};
 
 	setCookies({
 		accessToken,

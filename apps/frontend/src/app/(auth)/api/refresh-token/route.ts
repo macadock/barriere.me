@@ -43,10 +43,10 @@ export async function GET(request: Request) {
 		redirect("/login");
 	}
 
-	const { accessToken, refreshToken } = await response.json<{
+	const { accessToken, refreshToken } = (await response.json()) as {
 		accessToken: string;
 		refreshToken: string;
-	}>();
+	};
 
 	setCookies({
 		accessToken,

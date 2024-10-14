@@ -5,10 +5,6 @@
 	"scripts": {
 		"build": "next build",
 		"dev": "next dev",
-		"dev:worker": "wrangler dev --port 8771",
-		"preview": "npm run build && npm run dev:worker",
-		"deploy": "npm run build && wrangler deploy",
-		"cf-typegen": "wrangler types --experimental-include-runtime --env-interface CloudflareEnv",
 		"shadcn:add": "npx shadcn@latest add"
 	},
 	"devDependencies": {

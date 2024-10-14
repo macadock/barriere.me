@@ -16,10 +16,12 @@ export const getMeasures = async (): Promise<Array<Measure>> => {
 		return [];
 	}
 
-	return response.json<Array<Measure>>();
+	return response.json();
 };
 
-export const createMeasure = async (measure: Omit<Measure, "id">) => {
+export const createMeasure = async (
+	measure: Omit<Measure, "id">,
+): Promise<Measure> => {
 	const response = await fetchWithCookies({
 		url: "/measures",
 		query: {
@@ -36,13 +38,13 @@ export const createMeasure = async (measure: Omit<Measure, "id">) => {
 	}
 
 	revalidateTag(ALL_MEASURES_CACHE_TAG);
-	return response.json<Measure>();
+	return response.json();
 };
 
 export const updateMeasure = async (
 	measure: Pick<Measure, "id" | "measures"> &
 		Partial<Omit<Measure, "id" | "measures">>,
-) => {
+): Promise<Measure> => {
 	const measureId = measure.id;
 	const response = await fetchWithCookies({
 		url: `/measures/${measureId}`,
@@ -60,7 +62,7 @@ export const updateMeasure = async (
 	}
 
 	revalidateTag(ALL_MEASURES_CACHE_TAG);
-	return response.json<Measure>();
+	return response.json();
 };
 
 export const deleteMeasure = async (measureId: string) => {

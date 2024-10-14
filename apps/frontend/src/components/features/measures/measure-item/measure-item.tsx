@@ -1,4 +1,4 @@
-import type { Measure } from "api/src/routes/measures/schema";
+import type { Measure } from "api/src/routes/api/measures/schema";
 
 export interface MeasureItemProps {
 	measure: Measure;

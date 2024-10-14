@@ -4,5 +4,4 @@ interface CloudflareBindings {
 	SUPABASE_URL: string;
 	SUPABASE_ANON_KEY: string;
 	ENVIRONMENT: string;
-	DOMAIN: string;
 }

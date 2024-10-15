@@ -18,14 +18,13 @@ import {
 	type Measure,
 	measureProperties,
 } from "api/src/routes/api/measures/schema";
+import type React from "react";
 import { useMemo, useState } from "react";
 import {
 	Bar,
 	BarChart,
 	CartesianGrid,
 	LabelList,
-	Line,
-	LineChart,
 	XAxis,
 	YAxis,
 } from "recharts";
@@ -37,12 +36,16 @@ export interface MeasureChartProps {
 export const MeasureChart = ({ measures }: MeasureChartProps) => {
 	const [property, setProperty] = useState<string>(measureProperties[0]);
 
-	const { data, chartConfig } = useMemo(() => {
-		const { label } = measureProps[property];
+	const { data, chartConfig, unit, label } = useMemo(() => {
+		const { label, unit } = measureProps[property];
 
 		const data = measures.map((measure) => ({
 			id: measure.id,
-			date: new Intl.DateTimeFormat("fr-FR").format(new Date(measure.date)),
+			date: new Intl.DateTimeFormat("fr-FR", {
+				weekday: "short",
+				day: "2-digit",
+				month: "short",
+			}).format(new Date(measure.date)),
 			data: measure.measures[property] as number,
 		}));
 
@@ -59,13 +62,15 @@ export const MeasureChart = ({ measures }: MeasureChartProps) => {
 		return {
 			data,
 			chartConfig,
+			unit,
+			label,
 		};
 	}, [measures, property]);
 
 	return (
 		<div className={"flex flex-col gap-4 p-4"}>
 			<Select value={property} onValueChange={setProperty}>
-				<SelectTrigger className="w-[180px]">
+				<SelectTrigger className="max-w-full sm:max-w-[300px]">
 					<SelectValue placeholder="Mesure" />
 				</SelectTrigger>
 				<SelectContent>
@@ -99,10 +104,30 @@ export const MeasureChart = ({ measures }: MeasureChartProps) => {
 						hide
 					/>
 					<ChartTooltip
-						cursor={false}
 						content={
-							<ChartTooltipContent className="w-[250px]" nameKey="data" />
+							<ChartTooltipContent
+								formatter={(value, name, item, index) => (
+									<>
+										<div
+											className="h-2.5 w-2.5 shrink-0 rounded-[2px] bg-[--color-bg]"
+											style={
+												{
+													"--color-bg": `var(--color-${name})`,
+												} as React.CSSProperties
+											}
+										/>
+										{label}
+										<div className="ml-auto flex items-baseline gap-0.5 font-mono font-medium tabular-nums text-foreground">
+											{value}
+											<span className="font-normal text-muted-foreground">
+												{unit}
+											</span>
+										</div>
+									</>
+								)}
+							/>
 						}
+						cursor={false}
 					/>
 					<Bar dataKey={"data"} fill={"var(--color-data)"} radius={5}>
 						<LabelList
@@ -118,6 +143,9 @@ export const MeasureChart = ({ measures }: MeasureChartProps) => {
 							offset={8}
 							className="fill-foreground"
 							fontSize={12}
+							formatter={(value: string) => {
+								return `${value} ${unit}`;
+							}}
 						/>
 					</Bar>
 				</BarChart>

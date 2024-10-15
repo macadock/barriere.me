@@ -13,7 +13,7 @@ export default async function Measures() {
 	const measures = await getMeasures();
 
 	return (
-		<div className={"flex flex-col gap-6 overflow-hidden h-full"}>
+		<div className={"flex flex-col flex-1 gap-6 overflow-hidden"}>
 			<MeasuresHeader />
 			<MeasureTabs measures={measures} />
 		</div>

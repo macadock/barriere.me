@@ -151,7 +151,7 @@ export const UpdateMeasureDialog = ({
 							/>
 						))}
 					</div>
-					<AlertDialogFooter>
+					<AlertDialogFooter className={"mt-2"}>
 						<AlertDialogCancel>Annuler</AlertDialogCancel>
 						<Button type={"submit"}>Mettre à jour</Button>
 					</AlertDialogFooter>

@@ -16,7 +16,7 @@ const measureAttribute = zod.preprocess(
 		.optional(),
 );
 
-const measureProperties = [
+export const measureProperties = [
 	"leftBicep",
 	"rightBicep",
 	"chest",

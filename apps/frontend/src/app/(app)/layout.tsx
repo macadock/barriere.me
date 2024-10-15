@@ -21,7 +21,7 @@ export default async function RootLayout({
 	return (
 		<div className="grid min-h-screen overflow-hidden md:grid-cols-[220px_1fr] lg:grid-cols-[280px_1fr]">
 			<Sidebar />
-			<div className="flex flex-col overflow-hidden">
+			<div className="flex flex-col overflow-hidden max-h-dvh">
 				<Header>
 					<div className="w-full flex-1 flex justify-end">
 						<DropdownMenu>
@@ -45,7 +45,7 @@ export default async function RootLayout({
 						</DropdownMenu>
 					</div>
 				</Header>
-				<main className="flex flex-1 flex-col gap-4 p-4 lg:gap-6 lg:p-6">
+				<main className="flex flex-1 flex-col gap-4 p-4 lg:gap-6 lg:p-6 overflow-hidden">
 					{children}
 				</main>
 				<Toaster position={"top-right"} />

@@ -1,7 +1,6 @@
 "use client";
 
 import { createMeasure, updateMeasure } from "@/app/actions/measures";
-import { CalendarPopover } from "@/components/common/calendar-popover";
 import { measureProps } from "@/components/features/measures/config";
 import {
 	AlertDialog,
@@ -15,6 +14,7 @@ import {
 	AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
+import { Calendar } from "@/components/ui/calendar";
 import {
 	Form,
 	FormControl,
@@ -23,15 +23,22 @@ import {
 	FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import {
+	Popover,
+	PopoverContent,
+	PopoverTrigger,
+} from "@/components/ui/popover";
+import { cn } from "@/lib/utils";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
 	type Measure,
 	measuresSchema,
 } from "api/src/routes/api/measures/schema";
-import { ArrowLeft, X } from "lucide-react";
+import { ArrowLeft, CalendarIcon, X } from "lucide-react";
 import { type PropsWithChildren, useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
+import { date } from "zod";
 
 export const NewMeasureModal = ({ children }: PropsWithChildren) => {
 	const [currentStep, setCurrentStep] = useState(0);
@@ -151,7 +158,7 @@ export const NewMeasureModal = ({ children }: PropsWithChildren) => {
 								<FormField
 									key={key}
 									control={control}
-									name={key as keyof Measure["measures"]}
+									name={key}
 									render={({ field }) => (
 										<FormItem className={"flex-1"}>
 											<FormControl>
@@ -167,16 +174,34 @@ export const NewMeasureModal = ({ children }: PropsWithChildren) => {
 										</FormItem>
 									)}
 								/>
-								<CalendarPopover
-									mode="single"
-									selected={measureDate}
-									onSelect={(value) => {
-										if (value) {
-											setMeasureDate(value);
-										}
-									}}
-									toDate={new Date()}
-								/>
+								<Popover>
+									<PopoverTrigger asChild>
+										<Button
+											variant={"outline"}
+											className={cn(
+												"justify-start text-left font-normal",
+												!date && "text-muted-foreground",
+											)}
+										>
+											<CalendarIcon className="mr-2 h-4 w-4" />
+											{measureDate
+												? new Intl.DateTimeFormat("fr-FR").format(measureDate)
+												: "Nouvelle date"}
+										</Button>
+									</PopoverTrigger>
+									<PopoverContent className="w-auto p-0">
+										<Calendar
+											mode="single"
+											selected={measureDate}
+											onSelect={(value) => {
+												if (value) {
+													setMeasureDate(value);
+												}
+											}}
+											toDate={new Date()}
+										/>
+									</PopoverContent>
+								</Popover>
 							</div>
 						</div>
 						<div className="text-sm text-gray-500 text-center">

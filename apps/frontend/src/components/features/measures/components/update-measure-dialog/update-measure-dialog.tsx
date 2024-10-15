@@ -70,12 +70,15 @@ export const UpdateMeasureDialog = ({
 
 	const measuresKeys = Object.keys(measureProps);
 
-	const onSubmit = useCallback(async (data: Measure) => {
-		await updateMeasure(data);
+	const onSubmit = useCallback(
+		async (data: Measure) => {
+			await updateMeasure(data);
 
-		toast.success("Mesures enregistrées");
-		onClose();
-	}, []);
+			toast.success("Mesures enregistrées");
+			onClose();
+		},
+		[onClose],
+	);
 
 	return (
 		<AlertDialogContent className={"h-2/3"}>

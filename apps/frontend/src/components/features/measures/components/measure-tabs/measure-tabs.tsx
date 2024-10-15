@@ -1,4 +1,3 @@
-import { deleteMeasure } from "@/app/actions/measures";
 import {
 	MeasureEmptyScreen,
 	MeasuresTable,
@@ -24,7 +23,7 @@ export const MeasureTabs = ({ measures = [] }: MeasureTabsProps) => {
 				</TabsTrigger>
 			</TabsList>
 			<TabsContent value="table">
-				<MeasuresTable measures={measures} onClickRemove={deleteMeasure} />
+				<MeasuresTable measures={measures} />
 			</TabsContent>
 		</Tabs>
 	);

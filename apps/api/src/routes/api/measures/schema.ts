@@ -1,22 +1,34 @@
-import zod from "zod";
+import zod, { type ZodRawShape } from "zod";
 
-export const measuresSchema = zod.object({
-	leftBicep: zod.number().positive().optional(),
-	rightBicep: zod.number().positive().optional(),
-	chest: zod.number().positive().optional(),
-	waist: zod.number().positive().optional(),
-	belly: zod.number().positive().optional(),
-	hips: zod.number().positive().optional(),
-	leftThigh: zod.number().positive().optional(),
-	rightThigh: zod.number().positive().optional(),
-	leftKnee: zod.number().positive().optional(),
-	rightKnee: zod.number().positive().optional(),
-	weight: zod.number().positive().optional(),
-});
+const measureAttribute = zod.coerce
+	.number()
+	.positive("Le nombre doit être positif")
+	.optional();
+
+const measureProperties = [
+	"leftBicep",
+	"rightBicep",
+	"chest",
+	"waist",
+	"belly",
+	"hips",
+	"leftThigh",
+	"rightThigh",
+	"leftKnee",
+	"rightKnee",
+	"weight",
+];
+
+export const measuresSchema = zod.object(
+	measureProperties.reduce((acc, prop) => {
+		acc[prop] = measureAttribute;
+		return acc;
+	}, {} as ZodRawShape),
+);
 
 export const measureSchema = zod.object({
 	measures: zod.object(measuresSchema.shape),
-	date: zod.string().datetime(),
+	date: zod.coerce.date(),
 	id: zod.string().uuid(),
 });
 

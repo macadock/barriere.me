@@ -65,7 +65,7 @@ export const updateMeasure = async (
 	return response.json();
 };
 
-export const deleteMeasure = async (measureId: string) => {
+export const removeMeasure = async (measureId: string) => {
 	const response = await fetchWithCookies({
 		url: `/measures/${measureId}`,
 		query: {

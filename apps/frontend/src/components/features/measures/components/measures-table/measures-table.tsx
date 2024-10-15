@@ -1,7 +1,9 @@
 "use client";
 
+import { removeMeasure } from "@/app/actions/measures";
 import { DataTable } from "@/components/common/data-table";
 import { DataTableColumnHeader } from "@/components/common/data-table/components/data-table-column-header";
+import { UpdateMeasureDialog } from "@/components/features/measures/components";
 import { measureProps } from "@/components/features/measures/config";
 import {
 	AlertDialog,
@@ -31,21 +33,24 @@ import {
 	Pencil,
 	Trash,
 } from "lucide-react";
-import { useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
+
+type Action = "edit" | "remove";
 
 export interface MeasuresTableProps {
 	measures: Array<Measure>;
-	onClickRemove?: (id: string) => Promise<void> | void;
-	onClickEdit?: (id: string) => Promise<void> | void;
 }
 
-export const MeasuresTable = ({
-	measures = [],
-	onClickRemove,
-	onClickEdit,
-}: MeasuresTableProps) => {
-	const [openDeleteDialog, setOpenDeleteDialog] = useState<boolean>(false);
-	const [selectedItemId, setSelectedItemId] = useState<string | null>(null);
+export const MeasuresTable = ({ measures = [] }: MeasuresTableProps) => {
+	const [openDialog, setOpenDialog] = useState<boolean>(false);
+	const [selectedItem, setSelectedItem] = useState<Measure | null>(null);
+	const [action, setAction] = useState<Action | undefined>();
+
+	const handleOpenDialog = useCallback((action: Action, measure: Measure) => {
+		setAction(action);
+		setOpenDialog(true);
+		setSelectedItem(measure);
+	}, []);
 
 	const memoizedColumns = useMemo(() => {
 		const measureKeys = Object.keys(measureProps) as Array<
@@ -90,85 +95,90 @@ export const MeasuresTable = ({
 			}),
 		];
 
-		const actionsColumn: Array<ColumnDef<Measure>> =
-			onClickRemove || onClickEdit
-				? [
-						{
-							id: "actions",
-							enableSorting: true,
-							header: ({ column }) => (
-								<DataTableColumnHeader column={column} title="Actions" />
-							),
-							cell: ({ row }) => {
-								return (
-									<DropdownMenu>
-										<DropdownMenuTrigger asChild>
-											<Button aria-haspopup="true" size="icon" variant="ghost">
-												<MoreHorizontal className="h-4 w-4" />
-												<span className="sr-only">Toggle menu</span>
-											</Button>
-										</DropdownMenuTrigger>
-										<DropdownMenuContent align="end">
-											<DropdownMenuLabel>Actions</DropdownMenuLabel>
-											{onClickEdit && (
-												<DropdownMenuItem
-													onClick={() => {
-														onClickEdit(row.original.id);
-													}}
-													className={"gap-2 cursor-pointer"}
-												>
-													<Pencil className={"size-4"} />
-													<p>Éditer</p>
-												</DropdownMenuItem>
-											)}
-											{onClickRemove && (
-												<DropdownMenuItem
-													onClick={() => {
-														setSelectedItemId(row.original.id);
-														setOpenDeleteDialog(true);
-													}}
-													className={"gap-2 cursor-pointer"}
-												>
-													<Trash className={"size-4"} />
-													<p>Supprimer</p>
-												</DropdownMenuItem>
-											)}
-										</DropdownMenuContent>
-									</DropdownMenu>
-								);
-							},
-						},
-					]
-				: [];
+		const actionsColumn: Array<ColumnDef<Measure>> = [
+			{
+				id: "actions",
+				enableSorting: true,
+				header: ({ column }) => (
+					<DataTableColumnHeader column={column} title="Actions" />
+				),
+				cell: ({ row }) => {
+					return (
+						<DropdownMenu>
+							<DropdownMenuTrigger asChild>
+								<Button aria-haspopup="true" size="icon" variant="ghost">
+									<MoreHorizontal className="h-4 w-4" />
+									<span className="sr-only">Toggle menu</span>
+								</Button>
+							</DropdownMenuTrigger>
+							<DropdownMenuContent align="end">
+								<DropdownMenuLabel>Actions</DropdownMenuLabel>
+								<DropdownMenuItem
+									onClick={() => {
+										handleOpenDialog("edit", row.original);
+									}}
+									className={"gap-2 cursor-pointer"}
+								>
+									<Pencil className={"size-4"} />
+									<p>Éditer</p>
+								</DropdownMenuItem>
+								<DropdownMenuItem
+									onClick={() => {
+										handleOpenDialog("remove", row.original);
+									}}
+									className={"gap-2 cursor-pointer"}
+								>
+									<Trash className={"size-4"} />
+									<p>Supprimer</p>
+								</DropdownMenuItem>
+							</DropdownMenuContent>
+						</DropdownMenu>
+					);
+				},
+			},
+		];
 
 		return [...columns, ...actionsColumn];
-	}, [onClickEdit, onClickRemove]);
+	}, [handleOpenDialog]);
 
 	return (
-		<AlertDialog open={openDeleteDialog} onOpenChange={setOpenDeleteDialog}>
+		<AlertDialog open={openDialog} onOpenChange={setOpenDialog}>
 			<DataTable columns={memoizedColumns} data={measures} />
-			<AlertDialogContent>
-				<AlertDialogHeader>
-					<AlertDialogTitle>Supprimer</AlertDialogTitle>
-					<AlertDialogDescription>
-						Cette action est irréversible, êtes-vous sûr de vouloir supprimer
-						cet élément ?
-					</AlertDialogDescription>
-				</AlertDialogHeader>
-				<AlertDialogFooter>
-					<AlertDialogCancel>Annuler</AlertDialogCancel>
-					<AlertDialogAction
-						onClick={async () => {
-							if (onClickRemove && selectedItemId) {
-								await onClickRemove(selectedItemId);
-								setSelectedItemId(null);
-							}
-						}}
-					>
-						Supprimer
-					</AlertDialogAction>
-				</AlertDialogFooter>
-			</AlertDialogContent>
+			{
+				<>
+					{action === "remove" && selectedItem && (
+						<AlertDialogContent>
+							<AlertDialogHeader>
+								<AlertDialogTitle>Supprimer</AlertDialogTitle>
+								<AlertDialogDescription>
+									Cette action est irréversible, êtes-vous sûr de vouloir
+									supprimer cet élément ?
+								</AlertDialogDescription>
+							</AlertDialogHeader>
+							<AlertDialogFooter>
+								<AlertDialogCancel>Annuler</AlertDialogCancel>
+								<AlertDialogAction
+									onClick={async () => {
+										await removeMeasure(selectedItem.id);
+										setSelectedItem(null);
+									}}
+								>
+									Supprimer
+								</AlertDialogAction>
+							</AlertDialogFooter>
+						</AlertDialogContent>
+					)}
+					{action === "edit" && selectedItem && (
+						<UpdateMeasureDialog
+							key={selectedItem.id}
+							measure={selectedItem}
+							onClose={() => {
+								setOpenDialog(false);
+							}}
+						/>
+					)}
+				</>
+			}
 		</AlertDialog>
 	);
 };
@@ -180,8 +190,6 @@ const Trend = ({
 	current: number | undefined;
 	previous: number | undefined;
 }) => {
-	console.log("current", current);
-	console.log("previous", previous);
 	if (current === undefined || previous === undefined) return null;
 	if (current > previous) return <ArrowUpRight className="text-red-500" />;
 	if (current < previous) return <ArrowDownRight className="text-green-500" />;

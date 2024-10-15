@@ -1,6 +1,7 @@
 "use client";
 
 import { createMeasure, updateMeasure } from "@/app/actions/measures";
+import { CalendarPopover } from "@/components/common/calendar-popover";
 import { measureProps } from "@/components/features/measures/config";
 import {
 	AlertDialog,
@@ -14,24 +15,23 @@ import {
 	AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
-import { Calendar } from "@/components/ui/calendar";
-import { Input } from "@/components/ui/input";
 import {
-	Popover,
-	PopoverContent,
-	PopoverTrigger,
-} from "@/components/ui/popover";
-import { cn } from "@/lib/utils";
+	Form,
+	FormControl,
+	FormField,
+	FormItem,
+	FormMessage,
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
 	type Measure,
 	measuresSchema,
 } from "api/src/routes/api/measures/schema";
-import { ArrowLeft, CalendarIcon, X } from "lucide-react";
+import { ArrowLeft, X } from "lucide-react";
 import { type PropsWithChildren, useState } from "react";
-import { Controller, useForm } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { toast } from "sonner";
-import { date } from "zod";
 
 export const NewMeasureModal = ({ children }: PropsWithChildren) => {
 	const [currentStep, setCurrentStep] = useState(0);
@@ -43,10 +43,13 @@ export const NewMeasureModal = ({ children }: PropsWithChildren) => {
 
 	const { icon, description, label, unit } = measureProps[key];
 
-	const { control, reset } = useForm<Measure["measures"]>({
+	const form = useForm<Measure["measures"]>({
+		mode: "onChange",
 		resolver: zodResolver(measuresSchema),
 		defaultValues: attributes.reduce((acc, key) => ({ ...acc, [key]: "" }), {}),
 	});
+
+	const { control, reset } = form;
 
 	const handleNext = () => {
 		setCurrentStep((prev) => Math.min(prev + 1, attributes.length - 1));
@@ -81,14 +84,14 @@ export const NewMeasureModal = ({ children }: PropsWithChildren) => {
 			if (isNewMeasure) {
 				const createdMeasure = await createMeasure({
 					measures: parsedMeasures.data,
-					date: measureDate.toISOString(),
+					date: measureDate,
 				});
 				setMeasureId(createdMeasure.id);
 			} else {
 				await updateMeasure({
 					id: measureId,
 					measures: parsedMeasures.data,
-					date: measureDate.toISOString(),
+					date: measureDate,
 				});
 			}
 			const isLastStep = currentStep + 1 === attributes.length;
@@ -97,10 +100,10 @@ export const NewMeasureModal = ({ children }: PropsWithChildren) => {
 			} else {
 				handleNext();
 			}
-			toast.success("Mesure sauvegardée");
+			toast.success("Mesure enregistrée");
 		} catch (e) {
 			console.log("error", e);
-			toast.error("Une erreur est survenue lors de la sauvegarde");
+			toast.error("Erreur, mesure non enregistrée");
 		}
 	};
 
@@ -108,114 +111,104 @@ export const NewMeasureModal = ({ children }: PropsWithChildren) => {
 		<AlertDialog>
 			<AlertDialogTrigger asChild>{children}</AlertDialogTrigger>
 			<AlertDialogContent>
-				<form action={handleSave} className={"flex flex-col gap-4"}>
-					<AlertDialogHeader>
-						<div className={"flex flex-col gap-2 items-center justify-between"}>
-							<div className="flex items-center gap-2 justify-between w-full">
-								<Button
-									type="button"
-									variant="outline"
-									size="icon"
-									disabled={currentStep === 0}
-									title={"Retour"}
-									onClick={handlePrevious}
-								>
-									<ArrowLeft className={"h-4 w-4"} />
-								</Button>
-								<AlertDialogTitle>
-									<label htmlFor={key} className={"flex items-center gap-2"}>
-										{label}
-										{icon}
-									</label>
-								</AlertDialogTitle>
-
-								<AlertDialogCancel
-									title="Annuler"
-									onClick={resetStep}
-									className={"w-10 h-10 p-0"}
-								>
-									<X className={"h-4 w-4"} />
-								</AlertDialogCancel>
-							</div>
-							<AlertDialogDescription>{description}</AlertDialogDescription>
-						</div>
-					</AlertDialogHeader>
-					<div className="flex flex-col gap-4">
-						<div className="flex flex-col sm:flex-row gap-2">
-							<Controller
-								key={key}
-								control={control}
-								name={key as keyof Measure["measures"]}
-								render={({ field: { name, onChange, value } }) => (
-									<Input
-										id={name}
-										name={name}
-										placeholder={`Mesure en ${unit}`}
-										autoFocus
-										inputMode={"decimal"}
-										value={value}
-										onChange={onChange}
-										pattern={"[0-9]*[.,]?[0-9]+"}
-									/>
-								)}
-							/>
-							<Popover>
-								<PopoverTrigger asChild>
+				<Form {...form}>
+					<form action={handleSave} className={"flex flex-col gap-4"}>
+						<AlertDialogHeader>
+							<div
+								className={"flex flex-col gap-2 items-center justify-between"}
+							>
+								<div className="flex items-center gap-2 justify-between w-full">
 									<Button
-										variant={"outline"}
-										className={cn(
-											"justify-start text-left font-normal",
-											!date && "text-muted-foreground",
-										)}
+										type="button"
+										variant="outline"
+										size="icon"
+										disabled={currentStep === 0}
+										title={"Retour"}
+										onClick={handlePrevious}
 									>
-										<CalendarIcon className="mr-2 h-4 w-4" />
-										{new Intl.DateTimeFormat("fr-FR").format(measureDate)}
+										<ArrowLeft className={"h-4 w-4"} />
 									</Button>
-								</PopoverTrigger>
-								<PopoverContent className="w-auto p-0">
-									<Calendar
-										mode="single"
-										selected={measureDate}
-										onSelect={(value) => {
-											if (value) {
-												setMeasureDate(value);
-											}
-										}}
-										toDate={new Date()}
-									/>
-								</PopoverContent>
-							</Popover>
-						</div>
-					</div>
-					<div className="text-sm text-gray-500 text-center">
-						Mesure {currentStep + 1} sur {attributes.length}
-					</div>
-					<div className={"flex flex-col gap-2"}>
-						{currentStep + 1 === attributes.length ? (
-							<AlertDialogFooter className={"flex flex-col"}>
-								<div className={"flex flex-col gap-2 w-full"}>
-									<AlertDialogAction className={"w-full"} type={"submit"}>
-										Enregister
-									</AlertDialogAction>
-									<AlertDialogCancel className={"w-full"} onClick={resetStep}>
-										Fermer
+									<AlertDialogTitle>
+										<label htmlFor={key} className={"flex items-center gap-2"}>
+											{label}
+											{icon}
+										</label>
+									</AlertDialogTitle>
+
+									<AlertDialogCancel
+										title="Annuler"
+										onClick={resetStep}
+										className={"w-10 h-10 p-0"}
+									>
+										<X className={"h-4 w-4"} />
 									</AlertDialogCancel>
 								</div>
-							</AlertDialogFooter>
-						) : (
-							<>
-								<Button type={"submit"}>Suivant</Button>
-								<Button
-									variant={"outline"}
-									onClick={handleNext}
-									type={"button"}
-								>
-									Ignorer
-								</Button>
-							</>
-						)}
-					</div>
-				</form>
+								<AlertDialogDescription>{description}</AlertDialogDescription>
+							</div>
+						</AlertDialogHeader>
+						<div className="flex flex-col gap-4">
+							<div className="flex flex-col sm:flex-row gap-2">
+								<FormField
+									key={key}
+									control={control}
+									name={key as keyof Measure["measures"]}
+									render={({ field }) => (
+										<FormItem className={"flex-1"}>
+											<FormControl>
+												<Input
+													{...field}
+													placeholder={`Mesure en ${unit}`}
+													autoFocus
+													inputMode={"decimal"}
+													pattern={"[0-9]*[.,]?[0-9]+"}
+												/>
+											</FormControl>
+											<FormMessage />
+										</FormItem>
+									)}
+								/>
+								<CalendarPopover
+									mode="single"
+									selected={measureDate}
+									onSelect={(value) => {
+										if (value) {
+											setMeasureDate(value);
+										}
+									}}
+									toDate={new Date()}
+								/>
+							</div>
+						</div>
+						<div className="text-sm text-gray-500 text-center">
+							Mesure {currentStep + 1} sur {attributes.length}
+						</div>
+						<div className={"flex flex-col gap-2"}>
+							{currentStep + 1 === attributes.length ? (
+								<AlertDialogFooter className={"flex flex-col"}>
+									<div className={"flex flex-col gap-2 w-full"}>
+										<AlertDialogAction className={"w-full"} type={"submit"}>
+											Enregister
+										</AlertDialogAction>
+										<AlertDialogCancel className={"w-full"} onClick={resetStep}>
+											Fermer
+										</AlertDialogCancel>
+									</div>
+								</AlertDialogFooter>
+							) : (
+								<>
+									<Button type={"submit"}>Suivant</Button>
+									<Button
+										variant={"outline"}
+										onClick={handleNext}
+										type={"button"}
+									>
+										Ignorer
+									</Button>
+								</>
+							)}
+						</div>
+					</form>
+				</Form>
 			</AlertDialogContent>
 		</AlertDialog>
 	);

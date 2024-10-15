@@ -1,8 +1,7 @@
 import { MobileNavbar } from "@/components/common/header/components/mobile-navbar";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
-import { Home, Menu, Package2, Ruler } from "lucide-react";
-import Link from "next/link";
+import { Menu } from "lucide-react";
 import type { PropsWithChildren } from "react";
 
 export const Header = ({ children }: PropsWithChildren) => {

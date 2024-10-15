@@ -1,7 +1,8 @@
-import { deleteMeasure, getMeasures } from "@/app/actions/measures";
-import { MeasureEmptyScreen } from "@/components/features/measures/measure-empty-screen";
-import { MeasuresHeader } from "@/components/features/measures/measures-header";
-import { MeasuresTable } from "@/components/features/measures/measures-table";
+import { getMeasures } from "@/app/actions/measures";
+import {
+	MeasureTabs,
+	MeasuresHeader,
+} from "@/components/features/measures/components";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -14,11 +15,7 @@ export default async function Measures() {
 	return (
 		<div className={"flex flex-col gap-6 overflow-hidden h-full"}>
 			<MeasuresHeader />
-			{measures.length > 0 ? (
-				<MeasuresTable measures={measures} onClickRemove={deleteMeasure} />
-			) : (
-				<MeasureEmptyScreen />
-			)}
+			<MeasureTabs measures={measures} />
 		</div>
 	);
 }

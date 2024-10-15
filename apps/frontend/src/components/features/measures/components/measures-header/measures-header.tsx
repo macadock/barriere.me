@@ -1,4 +1,4 @@
-import { NewMeasureModal } from "@/components/features/measures/new-measure-modal/new-measure-modal";
+import { NewMeasureModal } from "@/components/features/measures/components";
 import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
 

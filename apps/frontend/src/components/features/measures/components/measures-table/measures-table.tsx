@@ -24,17 +24,14 @@ import {
 import type { ColumnDef } from "@tanstack/table-core";
 import type { Measure } from "api/src/routes/api/measures/schema";
 import {
-	ArrowDownCircle,
 	ArrowDownRight,
-	ArrowUpCircle,
 	ArrowUpRight,
 	Equal,
-	MinusCircle,
 	MoreHorizontal,
 	Pencil,
 	Trash,
 } from "lucide-react";
-import { useCallback, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 
 export interface MeasuresTableProps {
 	measures: Array<Measure>;
@@ -60,7 +57,10 @@ export const MeasuresTable = ({
 				header: ({ column }) => (
 					<DataTableColumnHeader column={column} title="Date" />
 				),
-				cell: (row) => new Date(row.getValue() as string).toLocaleDateString(),
+				cell: (row) =>
+					new Intl.DateTimeFormat("fr-FR").format(
+						new Date(row.getValue() as string),
+					),
 			},
 			...measureKeys.map((key) => {
 				return {
@@ -68,7 +68,7 @@ export const MeasuresTable = ({
 					header: ({ column }) => (
 						<DataTableColumnHeader
 							column={column}
-							title={measureProps[key].label}
+							title={`${measureProps[key].label} (${measureProps[key].unit})`}
 						/>
 					),
 					cell: (row) => {

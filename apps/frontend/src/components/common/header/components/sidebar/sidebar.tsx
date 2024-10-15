@@ -1,5 +1,5 @@
 import { NavItem } from "@/components/common/header/components/nav-item/nav-item";
-import { Home, Package2, Ruler } from "lucide-react";
+import { House, LayoutDashboard, Ruler } from "lucide-react";
 import Link from "next/link";
 
 export const Sidebar = () => {
@@ -11,14 +11,14 @@ export const Sidebar = () => {
 						href="/apps/frontend/public"
 						className="flex items-center gap-2 font-semibold"
 					>
-						<Package2 className="h-6 w-6" />
-						<span className="">Barriere & Cie</span>
+						<House className="h-6 w-6" />
+						<span className="">Maison</span>
 					</Link>
 				</div>
 				<div className="flex-1">
 					<nav className="grid items-start px-2 text-sm font-medium lg:px-4">
 						<NavItem
-							icon={<Home className="h-4 w-4" />}
+							icon={<LayoutDashboard className="h-4 w-4" />}
 							label={"Tableau de bord"}
 							href={"/"}
 						/>

@@ -41,7 +41,7 @@ export const NewMeasureModal = ({ children }: PropsWithChildren) => {
 	const attributes = Object.keys(measureProps);
 	const key = attributes[currentStep];
 
-	const { icon, description, label } = measureProps[key];
+	const { icon, description, label, unit } = measureProps[key];
 
 	const { control, reset } = useForm<Measure["measures"]>({
 		resolver: zodResolver(measuresSchema),
@@ -150,7 +150,7 @@ export const NewMeasureModal = ({ children }: PropsWithChildren) => {
 									<Input
 										id={name}
 										name={name}
-										placeholder={"Mesure en mm"}
+										placeholder={`Mesure en ${unit}`}
 										autoFocus
 										inputMode={"decimal"}
 										value={value}

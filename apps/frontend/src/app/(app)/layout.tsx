@@ -48,7 +48,7 @@ export default async function RootLayout({
 				<main className="flex flex-1 flex-col gap-4 p-4 lg:gap-6 lg:p-6">
 					{children}
 				</main>
-				<Toaster />
+				<Toaster position={"top-right"} />
 			</div>
 		</div>
 	);

@@ -5,6 +5,7 @@ import { getUser } from "@/app/actions/user";
 import { AuthRedirection } from "@/components/common/auth-redirection/auth-redirection";
 import { BreakpointsHelper } from "@/components/common/breakpoint-helper";
 import { clsx } from "clsx";
+import Head from "next/head";
 import { cookies } from "next/headers";
 
 const inter = Inter({ subsets: ["latin"] });
@@ -21,6 +22,12 @@ export default async function RootLayout({
 	const user = await getUser();
 	return (
 		<html lang="en">
+			<Head>
+				<meta
+					name="viewport"
+					content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no"
+				/>
+			</Head>
 			<body
 				className={clsx(
 					"min-h-screen max-w-full overflow-hidden text-balance",

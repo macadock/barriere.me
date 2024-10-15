@@ -51,19 +51,7 @@ export const UpdateMeasureDialog = ({
 		defaultValues: {
 			date: new Date(measure.date),
 			id: measure.id,
-			measures: Object.entries(measure.measures).reduce(
-				(acc, [key, value]) => {
-					const number = Number.parseFloat(`${value}`);
-					if (!Number.isNaN(number)) {
-						acc[key as keyof Measure["measures"]] = number;
-						return acc;
-					}
-
-					acc[key as keyof Measure["measures"]] = value;
-					return acc;
-				},
-				{} as Measure["measures"],
-			),
+			measures: measure.measures,
 		},
 	});
 	const { control, handleSubmit } = form;

@@ -1,9 +1,20 @@
 import zod, { type ZodRawShape } from "zod";
 
-const measureAttribute = zod.coerce
-	.number()
-	.positive("Le nombre doit être positif")
-	.optional();
+const measureAttribute = zod.preprocess(
+	(val) => {
+		if (typeof val === "string") {
+			return val.replace(",", ".");
+		}
+		return val;
+	},
+	zod
+		.number({
+			coerce: true,
+			message: "Merci d'entrer un nombre",
+		})
+		.positive("Le nombre doit être positif")
+		.optional(),
+);
 
 const measureProperties = [
 	"leftBicep",
@@ -28,7 +39,10 @@ export const measuresSchema = zod.object(
 
 export const measureSchema = zod.object({
 	measures: zod.object(measuresSchema.shape),
-	date: zod.coerce.date(),
+	date: zod.date({
+		coerce: true,
+		message: "Merci d'entrer une date",
+	}),
 	id: zod.string().uuid(),
 });
 

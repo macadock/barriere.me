@@ -3,8 +3,10 @@ import { Button } from "@/components/ui/button";
 
 export const LogoutButton = () => {
 	return (
-		<form action={handleLogout}>
-			<Button type={"submit"}>Déconnexion</Button>
+		<form action={handleLogout} className={"w-full"}>
+			<Button type={"submit"} className={"w-full"}>
+				Déconnexion
+			</Button>
 		</form>
 	);
 };

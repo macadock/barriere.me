@@ -6,7 +6,7 @@ interface FetchWithCookiesParams {
 	tags?: string[];
 }
 
-export const fetchWithCookies = async ({
+export const fetchWithAuthentication = async ({
 	url,
 	query,
 	tags = [],

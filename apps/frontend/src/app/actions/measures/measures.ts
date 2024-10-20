@@ -1,13 +1,13 @@
 "use server";
 
-import { fetchWithCookies } from "@/utils/fetch";
+import { fetchWithAuthentication } from "@/utils/fetch";
 import type { Measure } from "api/src/routes/api/measures/schema";
 import { revalidateTag } from "next/cache";
 
 const ALL_MEASURES_CACHE_TAG = "allMeasures";
 
 export const getMeasures = async (): Promise<Array<Measure>> => {
-	const response = await fetchWithCookies({
+	const response = await fetchWithAuthentication({
 		url: "/measures",
 		tags: [ALL_MEASURES_CACHE_TAG],
 	});
@@ -22,7 +22,7 @@ export const getMeasures = async (): Promise<Array<Measure>> => {
 export const createMeasure = async (
 	measure: Omit<Measure, "id">,
 ): Promise<Measure> => {
-	const response = await fetchWithCookies({
+	const response = await fetchWithAuthentication({
 		url: "/measures",
 		query: {
 			method: "POST",
@@ -46,7 +46,7 @@ export const updateMeasure = async (
 		Partial<Omit<Measure, "id" | "measures">>,
 ): Promise<Measure> => {
 	const measureId = measure.id;
-	const response = await fetchWithCookies({
+	const response = await fetchWithAuthentication({
 		url: `/measures/${measureId}`,
 		query: {
 			method: "PATCH",
@@ -66,7 +66,7 @@ export const updateMeasure = async (
 };
 
 export const removeMeasure = async (measureId: string) => {
-	const response = await fetchWithCookies({
+	const response = await fetchWithAuthentication({
 		url: `/measures/${measureId}`,
 		query: {
 			method: "DELETE",

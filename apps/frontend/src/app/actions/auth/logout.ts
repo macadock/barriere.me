@@ -1,12 +1,11 @@
 "use server";
 
-import { fetchWithCookies } from "@/utils/fetch";
+import { fetchWithAuthentication } from "@/utils/fetch";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 
 export const handleLogout = async () => {
-	const cookieStore = cookies();
-	const response = await fetchWithCookies({
+	const response = await fetchWithAuthentication({
 		url: "/auth/logout",
 		query: {
 			method: "POST",

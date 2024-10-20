@@ -1,7 +1,7 @@
 "use server";
 
 import { setCookies } from "@/app/actions/auth/cookies.utils";
-import { fetchWithCookies } from "@/utils/fetch";
+import { fetchWithAuthentication } from "@/utils/fetch";
 import { redirect } from "next/navigation";
 
 export async function handleLogin(
@@ -13,7 +13,7 @@ export async function handleLogin(
 		password: formData.get("password"),
 	};
 
-	const response = await fetchWithCookies({
+	const response = await fetchWithAuthentication({
 		url: "/auth/login",
 		query: {
 			method: "POST",

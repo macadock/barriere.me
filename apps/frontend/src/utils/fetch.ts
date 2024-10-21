@@ -1,6 +1,6 @@
 import { cookies } from "next/headers";
 
-interface FetchWithCookiesParams {
+interface FetchWithAuthenticationParams {
 	url: string;
 	query?: RequestInit;
 	tags?: string[];
@@ -10,7 +10,7 @@ export const fetchWithAuthentication = async ({
 	url,
 	query,
 	tags = [],
-}: FetchWithCookiesParams): Promise<Response> => {
+}: FetchWithAuthenticationParams): Promise<Response> => {
 	const API_URL = process.env.API_URL;
 	const cookiesStore = cookies();
 

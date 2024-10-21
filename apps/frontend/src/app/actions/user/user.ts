@@ -1,9 +1,9 @@
 "use server";
 
-import { fetchWithCookies } from "@/utils/fetch";
+import { fetchWithAuthentication } from "@/utils/fetch";
 
 export const getUser = async (): Promise<{ email: string } | undefined> => {
-	const response = await fetchWithCookies({ url: "/auth/me" });
+	const response = await fetchWithAuthentication({ url: "/auth/me" });
 
 	if (!response.ok) {
 		return undefined;

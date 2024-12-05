@@ -1,0 +1,9 @@
+{
+  "imports": {
+    "hono": "npm:hono",
+    "hono/basic-auth": "npm:hono/basic-auth",
+    "zod": "npm:zod",
+    "@hono/zod-validator": "npm:@hono/zod-validator",
+    "@supabase/supabase-js": "npm:@supabase/supabase-js"
+  }
+}
